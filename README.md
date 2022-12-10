@@ -8,7 +8,7 @@ raspivid -v -o movie.mov -m4v
 ### ffmpeg along with usb mic 
 raspivid -v -o movie.mov -m4v -m4a hw:1,0
 
-here hw:1,0 is the device name (usb mic), do the arecord -l to find the list of attached audio capture devices on rpi
+here hw:1,0 is the device name (usb mic), run "arecord -l" to see list of attached audio capture devices on rpi
 
 ### compute module (stereo)
 raspivid -v -o movie_tb.h264 -3d tb -w 1408 -h 1440
