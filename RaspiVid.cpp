@@ -753,7 +753,7 @@ static int parse_cmdline(int argc, const char **argv, RASPIVID_STATE *state)
 		state->detect_motion = 1;
 		state->raw_output = 1;
 
-		if(argv[i+1][0] != '-' && sscanf(argv[i + 1], "%d", &state->use_resizer) == 1) {
+		if( argc > i+1 && argv[i+1][0] != '-' && sscanf(argv[i + 1], "%d", &state->use_resizer) == 1) {
 			i++;
 		} else {
 			valid = 0;
@@ -1842,7 +1842,6 @@ static void resizer_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buf
 
 		//cv::imwrite("/mnt/usb/motion/resize2.bmp", image);
 	
-		
 		switch(frame_diff(image, image2, pstate)) {
 			case 2: // motion detected
 				pstate->motion_thres = 20;
@@ -1899,8 +1898,8 @@ static void resizer_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buf
 
 //#define ENCODING 
 
-//#define USE_ENCODING MMAL_ENCODING_I420
-#define USE_ENCODING MMAL_ENCODING_OPAQUE
+#define USE_ENCODING MMAL_ENCODING_I420
+//#define USE_ENCODING MMAL_ENCODING_OPAQUE
 static MMAL_STATUS_T create_camera_component(RASPIVID_STATE *state)
 {
    MMAL_COMPONENT_T *camera = 0;
@@ -2368,8 +2367,14 @@ static MMAL_STATUS_T create_resizer_component(RASPIVID_STATE *state) {
 	// We want same format on input and output
 	mmal_format_copy(resizer_input->format, state->camera_component->output[MMAL_CAMERA_PREVIEW_PORT]->format);
 		
-	resizer_input->format->es->video.crop.height = VCOS_ALIGN_UP(state->common_settings.height/6, 32);
-	resizer_input->format->es->video.crop.width = VCOS_ALIGN_UP(state->common_settings.width/6, 128); // 3d require width = 128x
+
+	resizer_input->format->es->video.height = VCOS_ALIGN_UP(state->common_settings.height/6, 32);
+   	resizer_input->format->es->video.width = VCOS_ALIGN_UP(state->common_settings.width/6, 128); // 3d require width = 128x
+
+	resizer_input->format->es->video.crop.height = resizer_input->format->es->video.height;
+	resizer_input->format->es->video.crop.width = resizer_input->format->es->video.width;
+	
+	//vcos_log_error("video_size=%d x %d\n", resizer_input->format->es->video.crop.width, resizer_input->format->es->video.crop.height);
 
 	//resizer_input->format->es->video.crop.height = state->common_settings.height;
 	//resizer_input->format->es->video.crop.width = state->common_settings.width; // 3d require width = 128x
@@ -3942,7 +3947,7 @@ error:
       if (state.common_settings.verbose)
          fprintf(stderr, "Closing down\n");
 
-	mp4w.finish();
+	//mp4w.finish();
 
       // Disable all our ports that are not handled by connections
       check_disable_port(camera_still_port);
