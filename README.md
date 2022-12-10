@@ -12,4 +12,5 @@ here hw:1,0 is the device name (usb mic), run "arecord -l" to see list of attach
 
 ### compute module (stereo)
 raspivid -v -o movie_tb.h264 -3d tb -w 1408 -h 1440
+
 raspivid -v -o movie_sbs.h264 -3d sbs -w 1920 -h 768
