@@ -14,3 +14,8 @@ here hw:1,0 is the device name (usb mic), run "arecord -l" to see list of attach
 raspivid -v -o movie_tb.h264 -3d tb -w 1408 -h 1440
 
 raspivid -v -o movie_sbs.h264 -3d sbs -w 1920 -h 768
+
+### motion detection and future fancy stuff
+raspivid -v -o movie.mov -m4v -mo 2
+
+above does recording (pause/resume) based on motion
